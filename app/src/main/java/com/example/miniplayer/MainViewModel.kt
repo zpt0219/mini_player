@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalDensity
 import androidx.lifecycle.ViewModel
 
 class MainViewModel : ViewModel() {
@@ -17,12 +18,11 @@ class MainViewModel : ViewModel() {
 
     var appContext : Context? = null
 
+    var firstUserMessage:Boolean = true
+
     init {
-        postUserMessage("Hello mini embedded player")
-        receiveReplyMessage("I'm an example mini player app")
+        receiveReplyMessage("I'm an scaled mini player at 360dp, send any input to get a horizontal shrunk mini player.")
         chatUiState.addMessage(Message(MessageType.MESSAGE_TYPE_MUSIC_PLAYER,"0.75"))
-        receiveReplyMessage("another example with shrinking while keeping original design")
-        chatUiState.addMessage(Message(MessageType.MESSAGE_TYPE_MUSIC_PLAYER,""))
     }
 
     fun showToast(text:String){
@@ -42,6 +42,20 @@ class MainViewModel : ViewModel() {
 
     fun postUserMessage(content:String){
         chatUiState.addMessage(Message(MessageType.MESSAGE_TYPE_USER,content))
+        val minScaleAt480px=1/appContext!!.resources.displayMetrics.density
+        if(firstUserMessage){
+            firstUserMessage=false
+            receiveReplyMessage("an example only shrinking horizontally using 480dp, input any number between $minScaleAt480px and 1")
+            chatUiState.addMessage(Message(MessageType.MESSAGE_TYPE_MUSIC_PLAYER,""))
+            return
+        }
+
+        var scale=content.toFloatOrNull()?:0f
+        if(scale<=minScaleAt480px||scale>1f){
+            scale=1f;
+        }
+        receiveReplyMessage("an example mini player with scale $scale")
+        chatUiState.addMessage(Message(MessageType.MESSAGE_TYPE_MUSIC_PLAYER,scale.toString()))
     }
 
     fun receiveReplyMessage(content:String){

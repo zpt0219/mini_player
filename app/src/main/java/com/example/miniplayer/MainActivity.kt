@@ -23,7 +23,7 @@ import kotlin.random.Random
 class MainActivity : ComponentActivity() {
     val viewModel: MainViewModel by viewModels()
     var isActivityStarted: Boolean = false
-    var lastFrameTimeNanos:Long=0;
+    var lastFrameTimeNanos:Long=0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
